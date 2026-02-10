@@ -1,0 +1,65 @@
+scout_task:
+  description: >
+    Scan the market using your tools to identify potential investment candidates.
+    1. Use the SectorDiscoveryTool to get a list of major tickers.
+    2. Use BraveSearch to find "Top Gainers", "High Volume", and "Upcoming Earnings" for {date}.
+    3. Compile a list of at least 15-20 diverse tickers for further analysis.
+  expected_output: >
+    A list of 15-20 stock tickers with a brief reason for their selection (e.g. "NVDA - AI Trend", "COIN - Crypto Rally").
+  agent: market_scout
+
+technical_analysis_task:
+  description: >
+    For each of the tickers provided by the Scout:
+    1. Generate a Logarithmic Chart using ChartGenerationTool.
+    2. Perform technical analysis (RSI, MACD, SMA) using TechnicalAnalysisTool.
+    3. Identify the trend (Bullish/Bearish) and key support/resistance levels.
+  expected_output: >
+    A Technical Analysis Report for each candidate, including the path to the generated chart image.
+  agent: technical_analyst
+
+fundamental_analysis_task:
+  description: >
+    For each of the tickers provided by the Scout:
+    1. Retrieve fundamental data (PE, Market Cap, etc.) using FundamentalDataTool.
+    2. Search for recent news/sentiment using BraveSearch.
+    3. Assess the company's financial health and growth prospects.
+  expected_output: >
+    A Fundamental Analysis summary for each candidate, highlighting strengths and weaknesses.
+  agent: fundamental_analyst
+
+risk_assessment_task:
+  description: >
+    Review the candidates for any red flags.
+    Search for lawsuits, regulatory investigations, or recent scandals.
+    Flag any ticker that has "High Risk" due to non-market factors.
+  expected_output: >
+    A Risk Report flagging any dangerous investments.
+  agent: risk_manager
+
+investment_decision_task:
+  description: >
+    Review the Technical, Fundamental, and Risk reports.
+    Select the "Top 5 Short-Term Investments" (focus on Momentum/Volatility).
+    Select the "Top 5 Long-Term Investments" (focus on Value/Growth/Fundamentals).
+    Provide a clear investment thesis for each pick.
+  expected_output: >
+    A finalized list of the Top 10 Picks (5 Short, 5 Long) with detailed reasoning.
+  agent: chief_investment_officer
+
+reporting_task:
+  description: >
+    Take the CIO's Final Picks and all generated chart images.
+    Compile a comprehensive "Market Watch Monthly" report.
+    
+    CRITICAL FORMATTING INSTRUCTIONS:
+    1. The report MUST contain a section titled "## Top 5 Short-Term Picks".
+    2. Under this section, list each pick as a bullet point starting with the Ticker in bold, e.g., "- **NVDA**: Reason...".
+    3. The report MUST contain a section titled "## Top 5 Long-Term Picks".
+    4. Under this section, list each pick as a bullet point starting with the Ticker in bold, e.g., "- **PLTR**: Reason...".
+    5. Embed the chart images using standard markdown image syntax: `![Ticker Chart](path/to/image.png)`.
+    
+    Use the WordReportTool to save the final analysis.
+  expected_output: >
+    A confirmation that the 'market_watch_report.docx' has been successfully created and the 'dashboard_data.json' has been generated.
+  agent: reporter
