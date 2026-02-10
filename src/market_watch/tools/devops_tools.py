@@ -39,7 +39,20 @@ class GitBranchTool(BaseTool):
 
     def _run(self, branch_name: str) -> str:
         try:
-            # Checkout new branch
+            # Check if branch exists
+            check_result = subprocess.run(
+                ['git', 'branch', '--list', branch_name],
+                capture_output=True,
+                text=True,
+                cwd=os.getcwd()
+            )
+            
+            if branch_name in check_result.stdout:
+                # Switch to existing branch
+                subprocess.run(['git', 'checkout', branch_name], cwd=os.getcwd())
+                return f"Branch '{branch_name}' already exists. Switched to it."
+            
+            # Create and switch to new branch
             result = subprocess.run(
                 ['git', 'checkout', '-b', branch_name],
                 capture_output=True,
@@ -140,15 +153,15 @@ class GitHubPRTool(BaseTool):
             import requests
 
             # Get repo from .env
-            repo = os.getenv("GITHUB_REPO")
-            if not repo:
+            repo_full_name = os.getenv("GITHUB_REPO")
+            if not repo_full_name:
                 return "Error: GITHUB_REPO not set in .env"
 
             # Get auth token
             token = get_installation_token()
 
             # Create PR
-            url = f"https://api.github.com/repos/{repo}/pulls"
+            url = f"https://api.github.com/repos/{repo_full_name}/pulls"
             headers = {
                 "Authorization": f"Bearer {token}",
                 "Accept": "application/vnd.github+json",
