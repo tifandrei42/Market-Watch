@@ -1,0 +1,84 @@
+test_generation_task:
+  description: >
+    Scan the repository for Python and TypeScript files that are missing tests.
+    Use the CodeScannerTool to identify files without corresponding test files.
+    Use the TestGeneratorTool to create pytest or jest test files.
+    Run the tests with PytestRunnerTool to verify they are syntactically correct.
+    
+    Focus on files in:
+    - src/market_watch/tools/ (Python)
+    - src/frontend/app/ (TypeScript)
+    
+    Generate tests for any file that doesn't have a test file yet.
+    Return a summary of test files created and test results.
+  expected_output: >
+    A detailed report listing:
+    1. Test files generated (with file paths)
+    2. Test execution results (pass/fail counts)
+    3. Recommendations for manual review
+  agent: qa_engineer
+
+branch_and_commit_task:
+  description: >
+    Create a new feature branch for the DevOps improvements.
+    Branch name should follow pattern: 'devops/YYYYMMDD-description'
+    
+    Stage and commit the following changes:
+    1. New test files (if any)
+    2. New tool files (devops_tools.py, testing_tools.py)
+    3. Configuration files (devops_agents.yaml, devops_tasks.yaml)
+    
+    Use semantic commit messages:
+    - "test: add unit tests for X"
+    - "feat: add devops automation tools"
+    - "chore: update devops configurations"
+    
+    Push the branch to remote.
+    Return the branch name for PR creation.
+  expected_output: >
+    Confirmation message with:
+    1. Branch name created
+    2. List of files committed
+    3. Commit message used
+    4. Push status
+  agent: release_manager
+
+pull_request_task:
+  description: >
+    Create a Pull Request from the feature branch to main.
+    
+    PR Title Format: "[DevOps] Brief description of changes"
+    
+    PR Body should include:
+    - Summary of changes made
+    - List of new files added
+    - Test results (if applicable)
+    - Checklist for reviewers:
+      - [ ] Tests pass
+      - [ ] Code follows project standards
+      - [ ] Documentation updated (if needed)
+    
+    Use the GitHubPRTool to create the PR.
+    Return the PR URL for manual review.
+  expected_output: >
+    Pull Request URL and confirmation that it was created successfully.
+  agent: release_manager
+
+issue_tracking_task:
+  description: >
+    Scan the codebase for TODO, FIXME, and BUG comments using CodeScannerTool.
+    Prioritize findings and create up to 5 GitHub issues.
+    
+    For each issue:
+    - Title: Extract the TODO text or summarize the issue
+    - Body: Include file path, line number, and full context
+    - Labels: Apply 'enhancement' for TODOs, 'bug' for FIXMEs/BUGs
+    
+    Skip issues for:
+    - Test files (we expect TODOs there)
+    - Already tracked issues (check existing issues first)
+    
+    Use the GitHubIssueCreatorTool to create issues.
+  expected_output: >
+    Summary of GitHub issues created, including issue numbers and URLs.
+  agent: project_manager
